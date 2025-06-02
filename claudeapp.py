@@ -6,23 +6,15 @@ import boto3
 import time
 from typing import Optional
 
-# Set up Streamlit page configuration
-st.set_page_config(
-    page_title="SLO County Policy Navigator",
-    page_icon="🗳️",
-    layout="wide"
-)
-
-# Custom CSS styling for NPR-style UI
 st.markdown("""
 <style>
 body, div, p, label, input, textarea {
-    font-family: 'Georgia', serif !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
     font-size: 16px;
     color: #2c2c2c;
 }
 h1, h2, h3, h4 {
-    font-family: 'Georgia', serif !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
     color: #1A1A1A;
 }
 section.main > div {
