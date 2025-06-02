@@ -5,7 +5,7 @@ import json
 import boto3
 import time
 from typing import Optional
-
+# avanti add
 # Bedrock Setup
 def get_bedrock_client(
     runtime: Optional[bool] = True,
