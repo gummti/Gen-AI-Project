@@ -154,7 +154,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("###Explore Civic Information")
+st.markdown("### Explore Civic Information")
 st.write("This tool helps you understand public documents and policy updates in **plain language**. Choose how to begin:")
 
 option = st.radio("Choose an option:", [
