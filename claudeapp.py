@@ -6,6 +6,9 @@ import boto3
 import time
 from typing import Optional
 
+# Page config MUST come first!
+st.set_page_config(page_title="LocalGov Navigator", layout="wide")
+
 st.markdown("""
 <style>
 body, div, p, label, input, textarea {
@@ -26,16 +29,23 @@ section.main > div {
     margin-bottom: 2rem;
 }
 .stButton > button {
-    background-color: #003262;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 4px;
-    padding: 0.5rem 1rem;
+    background-color: #ffffff !important;
+    color: #003262 !important;  /* Dark navy text */
+    font-weight: 600 !important;
+    border: 2px solid #003262 !important;
+    border-radius: 6px !important;
+    padding: 0.6rem 1.2rem !important;
+    margin-bottom: 0.5rem !important;
+    transition: background-color 0.2s ease, color 0.2s ease !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
 }
+
 .stButton > button:hover {
-    background-color: #005288;
+    background-color: #f0f8ff !important;  /* Very light blue on hover */
+    color: #002244 !important;
+    cursor: pointer !important;
 }
+
 input, textarea {
     border-radius: 4px;
     border: 1px solid #ccc;
@@ -146,7 +156,23 @@ Assistant:"""
     else:
         return f"[Error] {result}"
 
-# Banner
+# --- Initialize session state ---
+if "main_summary" not in st.session_state:
+    st.session_state["main_summary"] = None
+if "all_links" not in st.session_state:
+    st.session_state["all_links"] = []
+if "last_url" not in st.session_state:
+    st.session_state["last_url"] = ""
+
+# --- Session State Setup ---
+if "main_summary" not in st.session_state:
+    st.session_state["main_summary"] = None
+if "all_links" not in st.session_state:
+    st.session_state["all_links"] = []
+if "last_url" not in st.session_state:
+    st.session_state["last_url"] = ""
+
+# --- Banner ---
 st.markdown("""
 <div style="background-color:#003262;padding:1rem 2rem;border-radius:6px;margin-bottom:2rem;">
   <h2 style="color:white;margin:0;">SLO County Policy & Government Navigator</h2>
@@ -162,7 +188,7 @@ option = st.radio("Choose an option:", [
     "Pick a topic to explore current news in SLO County"
 ])
 
-# Option 1: Enter URL
+# --- Option 1: URL Summarizer ---
 if option == "Enter a government or policy webpage URL":
     url = st.text_input("Paste the URL of a government page:")
     if url and st.button("Extract and Summarize"):
@@ -171,19 +197,31 @@ if option == "Enter a government or policy webpage URL":
             if text.startswith("Error:"):
                 st.error(text)
             else:
-                summary = summarize_text_with_bedrock(text)
-                st.success("Summary complete.")
-                st.subheader("Summary:")
-                st.write(summary)
+                st.session_state["main_summary"] = summarize_text_with_bedrock(text)
+                st.session_state["last_url"] = url
+                # Note: Replace this with a real link extractor if desired
+                st.session_state["all_links"] = []
 
-# Option 2: Pick a predefined topic
+# Show main summary
+if st.session_state["main_summary"]:
+    st.subheader("Summary of Main Page")
+    st.write(st.session_state["main_summary"])
+
+# --- Option 2: Predefined Topics ---
 elif option == "Pick a topic to explore current news in SLO County":
     st.write("Select a department or topic:")
     topics = {
         "Clerk-Recorder": "https://www.slocounty.ca.gov/departments/clerk-recorder/news-announcements",
         "Upcoming Elections": "https://www.slocounty.ca.gov/departments/clerk-recorder/all-services/elections-and-voting/current-upcoming-elections",
         "Public Health": "https://www.slocounty.ca.gov/departments/health-agency/public-health/department-news",
-        "Auditor - Controller - Treasurer": "https://www.slocounty.ca.gov/departments/auditor-controller-treasurer-tax-collector-public/news"
+        "Auditor - Controller - Treasurer": "https://www.slocounty.ca.gov/departments/auditor-controller-treasurer-tax-collector-public/news",
+        "Planning & Building": "https://www.slocounty.ca.gov/departments/planning-building/department-news-announcements",
+        "Public Works": "https://www.slocounty.ca.gov/departments/public-works/department-news",
+        "Parks & Recreation": "https://www.slocounty.ca.gov/departments/parks-recreation/department-news",
+        "Human Resources": "https://www.slocounty.ca.gov/departments/human-resources/department-news",
+        "District Attorney": "https://www.slocounty.ca.gov/departments/district-attorney/latest-news",
+        "Social Services": "https://www.slocounty.ca.gov/departments/social-services/hsd-draft/latest-news",
+        "Countywide News": "https://www.slocounty.ca.gov/home/county-news"
     }
 
     for label, link in topics.items():
@@ -197,3 +235,6 @@ elif option == "Pick a topic to explore current news in SLO County":
                     st.success("Summary complete.")
                     st.subheader(f"Summary for: {label}")
                     st.write(summary)
+
+# --- Footer ---
+st.markdown('<div style="margin-top:3rem;font-size:0.85rem;color:#666;">© 2025 LocalGov Navigator. Designed to promote transparency and civic accessibility.</div>', unsafe_allow_html=True)
