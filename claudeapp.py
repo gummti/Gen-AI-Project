@@ -6,20 +6,23 @@ import boto3
 import time
 from typing import Optional
 
-# Page config MUST come first!
+# Page config
 st.set_page_config(page_title="LocalGov Navigator", layout="wide")
 
 st.markdown("""
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
 body, div, p, label, input, textarea {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    font-family: 'DM Sans', sans-serif !important;
     font-size: 16px;
     color: #2c2c2c;
 }
 h1, h2, h3, h4 {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    font-family: 'DM Sans', sans-serif !important;
     color: #1A1A1A;
 }
+
 section.main > div {
     padding: 2rem 3rem;
     background-color: #ffffff;
