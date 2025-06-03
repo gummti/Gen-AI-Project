@@ -181,7 +181,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("### Explore Civic Information")
-st.write("This tool helps you understand public documents and policy updates in **plain language**. Choose how to begin:")
+st.write("This tool helps you understand public documents and policy updates simply! Choose how to begin:")
 
 option = st.radio("Choose an option:", [
     "Enter a government or policy webpage URL",
@@ -209,7 +209,9 @@ if st.session_state["main_summary"]:
 
 # --- Option 2: Predefined Topics ---
 elif option == "Pick a topic to explore current news in SLO County":
-    st.write("Select a department or topic:")
+    st.subheader("Explore Civic Information by Topic")
+    st.markdown("Choose a department or topic in San Luis Obispo County to get a simple summary of recent updates.")
+
     topics = {
         "Clerk-Recorder": "https://www.slocounty.ca.gov/departments/clerk-recorder/news-announcements",
         "Upcoming Elections": "https://www.slocounty.ca.gov/departments/clerk-recorder/all-services/elections-and-voting/current-upcoming-elections",
@@ -221,20 +223,28 @@ elif option == "Pick a topic to explore current news in SLO County":
         "Human Resources": "https://www.slocounty.ca.gov/departments/human-resources/department-news",
         "District Attorney": "https://www.slocounty.ca.gov/departments/district-attorney/latest-news",
         "Social Services": "https://www.slocounty.ca.gov/departments/social-services/hsd-draft/latest-news",
-        "Countywide News": "https://www.slocounty.ca.gov/home/county-news"
+        "Countywide News": "https://www.slocounty.ca.gov/home/county-news",
+        "Office of Emergency Services": "https://www.slocounty.ca.gov/departments/administrative-office/office-of-emergency-services/news",
+        "Board of Supervisors": "https://www.slocounty.ca.gov/departments/board-of-supervisors/board-meetings,-agendas-and-minutes",
+        "Agriculture / Weights & Measures": "https://www.slocounty.ca.gov/departments/agriculture-weights-and-measures/department-news",
+        "Air Pollution Control District": "https://www.slocleanair.org/library/press-releases.php",
+        "Animal Services": "https://www.slocounty.ca.gov/departments/health-agency/animal-services/news/animal-services-news-archives",
+        "Behavioral Health": "https://www.slocounty.ca.gov/departments/health-agency/behavioral-health/department-news"
     }
 
-    for label, link in topics.items():
-        if st.button(label):
-            with st.spinner(f"Loading and summarizing content from {label}..."):
-                text = extract_text_from_html(link)
-                if text.startswith("Error:"):
-                    st.error(text)
-                else:
-                    summary = summarize_text_with_bedrock(text)
-                    st.success("Summary complete.")
-                    st.subheader(f"Summary for: {label}")
-                    st.write(summary)
+    topic_choice = st.selectbox("Department or topic:", list(topics.keys()))
+
+    if st.button("Summarize selected topic"):
+        selected_link = topics[topic_choice]
+        with st.spinner(f"Loading and summarizing content from {topic_choice}..."):
+            text = extract_text_from_html(selected_link)
+            if text.startswith("Error:"):
+                st.error(text)
+            else:
+                summary = summarize_text_with_bedrock(text)
+                st.success("Summary complete.")
+                st.subheader(f"{topic_choice} Summary")
+                st.write(summary)
 
 # --- Footer ---
 st.markdown('<div style="margin-top:3rem;font-size:0.85rem;color:#666;">© 2025 LocalGov Navigator. Designed to promote transparency and civic accessibility.</div>', unsafe_allow_html=True)
