@@ -1,13 +1,13 @@
 # Gen-AI SLO County Policy & Government Navigator
 
 ## Overview
-The Gen-AI SLO County Policy & Government Navigator is an AI-powered tool designed to make local government information more accessible and understandable for the public. Built specifically for San Luis Obispo County, the tool scrapes agendas, public records, and announcements from local government websites—such as city councils, school boards, and Cal Poly's ASI—then uses large language models to summarize and contextualize that information in a clear, conversational format.
+The Gen-AI SLO County Policy & Government Navigator is an AI-powered tool designed to make local government information more accessible and understandable for the public. Built specifically for San Luis Obispo County, the tool scrapes agendas, public records, and announcements from local government websites—such as city councils and school boards- then uses large language models to summarize and contextualize that information in a clear, conversational format.
 
 The prototype features a Streamlit-based interface where users can:
 
-1. Explore recent government documents and summaries
+1. Explore recent government website bulletins and summaries
 
-2. Search or filter by topic, department, or date
+2. Search or filter by topic
 
 3. Receive AI-generated briefings on policy developments
 
