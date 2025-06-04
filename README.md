@@ -9,13 +9,17 @@ This project uses AI to analyze pixel-level web traffic data from Claritas and g
 
 ## How to Use
 1. Clone the repo:
+   
 git clone https://github.com/YOUR_USERNAME/Gen-AI-Project.git
+
 cd Gen-AI-Project
 
-2. Install requirements:
+3. Install requirements:
+   
 pip install -r requirements.txt
 
-3. Run the Streamlit app:
+5. Run the Streamlit app:
+   
 streamlit run app.py
 
 ## Dependencies
