@@ -6,7 +6,6 @@ This project uses AI to analyze pixel-level web traffic data from Claritas and g
 ## Team Members
 - Avanti Gummaraju
 - Paige Tsai
-- [Add others]
 
 ## How to Use
 1. Clone the repo:
