@@ -7,6 +7,7 @@ import time
 from typing import Optional
 from urllib.parse import urljoin
 
+
 # Page config
 st.set_page_config(page_title="LocalGov Navigator", layout="wide")
 
@@ -137,10 +138,19 @@ def extract_links_from_html(url):
         res.raise_for_status()
         soup = BeautifulSoup(res.text, "html.parser")
         links = []
+
         for a_tag in soup.find_all("a", href=True):
             link_url = urljoin(url, a_tag["href"])
             link_text = a_tag.get_text(strip=True)
-            links.append({"url": link_url, "text": link_text})
+
+            # Check if the link is reachable (lightweight validation)
+            try:
+                head = requests.head(link_url, timeout=5, allow_redirects=True)
+                if head.status_code == 200:
+                    links.append({"url": link_url, "text": link_text})
+            except Exception:
+                continue  # Skip bad links silently
+
         return links
     except Exception as e:
         return []
@@ -217,24 +227,6 @@ if option == "Enter a government or policy webpage URL":
     if st.session_state["main_summary"]:
         st.markdown('<div class="section"><h4>Main Page Summary</h4>', unsafe_allow_html=True)
         st.markdown(f"<div class='summary-box'>{st.session_state['main_summary']}</div>", unsafe_allow_html=True)
-
-    # Show links if available
-    # if st.session_state["all_links"]:
-    #     st.markdown('<div class="section"><h4>Explore Linked Pages</h4>', unsafe_allow_html=True)
-    #     st.markdown("Select links below to summarize them. These are all links found on the current page.")
-
-    # if st.session_state["all_links"]:
-    #     st.markdown('<div class="section"><h4>Explore Linked Pages</h4>', unsafe_allow_html=True)
-    #     st.markdown("Click below to fetch and summarize linked content:")
-
-    #     for idx, link in enumerate(st.session_state["all_links"]):
-    #         with st.expander(f"{link['text'] or link['url']}"):
-    #             if st.button(f"Summarize", key=f"summarize_{idx}"):
-    #                 with st.spinner("Summarizing linked page..."):
-    #                     linked_text = extract_text_from_html(link["url"])
-    #                     linked_summary = summarize_text_with_bedrock(linked_text)
-    #                     st.markdown(f"**Summary for [{link['text']}]({link['url']}):**")
-    #                     st.markdown(f"<div class='summary-box'>{linked_summary}</div>", unsafe_allow_html=True)
 
     if st.session_state["all_links"]:
         st.markdown('<div class="section"><h4>Explore Linked Pages</h4>', unsafe_allow_html=True)
