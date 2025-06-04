@@ -1,19 +1,19 @@
 # Gen-AI SLO County Policy & Government Navigator
 
 ## Overview
-The Gen-AI SLO County Policy & Government Navigator is an AI-powered tool designed to make local government information more accessible and understandable for the public. Built specifically for San Luis Obispo County, the tool scrapes agendas, public records, and announcements from local government websites—such as city councils and school boards- then uses large language models to summarize and contextualize that information in a clear, conversational format.
+The Gen-AI SLO County Policy & Government Navigator is an AI-powered tool designed to make local government information more accessible, digestible, and actionable. Built specifically for San Luis Obispo County, the tool scrapes content from official local government websites — such as the Board of Supervisors, Elections, and department news pages — and uses large language models to generate plain-language summaries for the public.
 
 The prototype features a Streamlit-based interface where users can:
 
-1. Explore recent government website bulletins and summaries
+1. Paste a government webpage URL to receive an AI-generated summary of that page
 
-2. Search or filter by topic
+2. Explore by topic using a dropdown of known SLO County departments and services
 
-3. Receive AI-generated briefings on policy developments
+3. Receive plain-English briefings on policies, decisions, deadlines, and public actions
 
-4. Interact with linked resources and generate summaries of embedded URLs
+4. Summarize embedded links within the original page (e.g., supporting documents, department pages)
 
-By combining web scraping, natural language processing, and an intuitive interface, the Navigator aims to lower barriers to civic engagement and support informed participation in local governance—especially for students and community members who may not regularly follow public meetings or government portals.
+By combining web scraping, natural language processing, and a lightweight UI, the Navigator lowers barriers to civic engagement — especially for students, organizers, and community members who may not have time to track local government updates across scattered websites and formats.
 
 ## Team Members
 - Avanti Gummaraju
@@ -26,16 +26,21 @@ git clone https://github.com/YOUR_USERNAME/Gen-AI-Project.git
 
 cd Gen-AI-Project
 
-3. Install requirements:
+2. Install requirements:
    
 pip install -r requirements.txt
 
-5. Run the Streamlit app:
+3. Run the Streamlit app:
    
 streamlit run app.py
 
 ## Dependencies
-See `requirements.txt`.
+See `requirements.txt`. Major packages include:
+
+- streamlit
+- beautifulsoup4
+- requests
+- boto3
 
 ## Notes
-This app uses Claude via Amazon Bedrock, so you’ll need AWS credentials and proper setup to access the model.
+This app uses Claude v2 via Amazon Bedrock, so you’ll need AWS credentials and proper setup to access the model.
