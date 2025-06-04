@@ -5,6 +5,7 @@ import json
 import boto3
 import time
 from typing import Optional
+from urllib.parse import urljoin
 
 # Page config
 st.set_page_config(page_title="LocalGov Navigator", layout="wide")
@@ -130,6 +131,20 @@ def detect_page_type(text):
     else:
         return "general government page"
 
+def extract_links_from_html(url):
+    try:
+        res = requests.get(url, timeout=10)
+        res.raise_for_status()
+        soup = BeautifulSoup(res.text, "html.parser")
+        links = []
+        for a_tag in soup.find_all("a", href=True):
+            link_url = urljoin(url, a_tag["href"])
+            link_text = a_tag.get_text(strip=True)
+            links.append({"url": link_url, "text": link_text})
+        return links
+    except Exception as e:
+        return []
+
 # Generate summary using Bedrock Claude
 def summarize_text_with_bedrock(text, model_id="anthropic.claude-v2", max_tokens=1000):
     page_type = detect_page_type(text)
@@ -167,13 +182,6 @@ if "all_links" not in st.session_state:
 if "last_url" not in st.session_state:
     st.session_state["last_url"] = ""
 
-# --- Session State Setup ---
-if "main_summary" not in st.session_state:
-    st.session_state["main_summary"] = None
-if "all_links" not in st.session_state:
-    st.session_state["all_links"] = []
-if "last_url" not in st.session_state:
-    st.session_state["last_url"] = ""
 
 # --- Banner ---
 st.markdown("""
@@ -201,14 +209,57 @@ if option == "Enter a government or policy webpage URL":
                 st.error(text)
             else:
                 st.session_state["main_summary"] = summarize_text_with_bedrock(text)
+                st.session_state["all_links"] = extract_links_from_html(url)
                 st.session_state["last_url"] = url
-                # Note: Replace this with a real link extractor if desired
-                st.session_state["all_links"] = []
+                st.success("Summary and links extracted.")
 
-# Show main summary
-if st.session_state["main_summary"]:
-    st.subheader("Summary of Main Page")
-    st.write(st.session_state["main_summary"])
+    # Show summary if available
+    if st.session_state["main_summary"]:
+        st.markdown('<div class="section"><h4>Main Page Summary</h4>', unsafe_allow_html=True)
+        st.markdown(f"<div class='summary-box'>{st.session_state['main_summary']}</div>", unsafe_allow_html=True)
+
+    # Show links if available
+    # if st.session_state["all_links"]:
+    #     st.markdown('<div class="section"><h4>Explore Linked Pages</h4>', unsafe_allow_html=True)
+    #     st.markdown("Select links below to summarize them. These are all links found on the current page.")
+
+    # if st.session_state["all_links"]:
+    #     st.markdown('<div class="section"><h4>Explore Linked Pages</h4>', unsafe_allow_html=True)
+    #     st.markdown("Click below to fetch and summarize linked content:")
+
+    #     for idx, link in enumerate(st.session_state["all_links"]):
+    #         with st.expander(f"{link['text'] or link['url']}"):
+    #             if st.button(f"Summarize", key=f"summarize_{idx}"):
+    #                 with st.spinner("Summarizing linked page..."):
+    #                     linked_text = extract_text_from_html(link["url"])
+    #                     linked_summary = summarize_text_with_bedrock(linked_text)
+    #                     st.markdown(f"**Summary for [{link['text']}]({link['url']}):**")
+    #                     st.markdown(f"<div class='summary-box'>{linked_summary}</div>", unsafe_allow_html=True)
+
+    if st.session_state["all_links"]:
+        st.markdown('<div class="section"><h4>Explore Linked Pages</h4>', unsafe_allow_html=True)
+        st.markdown("Select a link below to summarize its content:")
+
+        link_options = {
+            f"{link['text'] or link['url'].split('/')[-1][:40] or 'Untitled'}": link["url"]
+            for link in st.session_state["all_links"]
+        }
+
+        selected_label = st.selectbox("Choose a link to summarize:", list(link_options.keys()))
+        selected_url = link_options[selected_label]
+
+        if st.button("Summarize Selected Link"):
+            with st.spinner("Fetching and summarizing..."):
+                linked_text = extract_text_from_html(selected_url)
+                if linked_text.startswith("Error:"):
+                    st.error(linked_text)
+                else:
+                    summary = summarize_text_with_bedrock(linked_text)
+                    st.markdown(f"**Summary for [{selected_label}]({selected_url}):**")
+                    st.markdown(f"<div class='summary-box'>{summary}</div>", unsafe_allow_html=True)
+
+
+
 
 # --- Option 2: Predefined Topics ---
 elif option == "Pick a topic to explore current news in SLO County":
